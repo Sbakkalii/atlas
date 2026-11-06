@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#050b14" />
+    <title>AI Research Atlas · Private preview</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14.5' fill='%2308121f' stroke='%23dcb366' stroke-width='1.5'/%3E%3Cpath d='M16 6.2l2.3 7.5 7.5 2.3-7.5 2.3-2.3 7.5-2.3-7.5-7.5-2.3 7.5-2.3z' fill='%23f1d698'/%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #050b14;
+        --panel: #08121f;
+        --line: #1a2c42;
+        --paper: #f3eee2;
+        --muted: #a2b2c1;
+        --gold: #dcb366;
+        --gold-soft: #f1d698;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+        padding: 2rem 1.25rem;
+        background: radial-gradient(60rem 40rem at 70% 10%, rgb(79 197 143 / 0.08), transparent 60%),
+          radial-gradient(50rem 30rem at 10% 90%, rgb(220 179 102 / 0.07), transparent 60%), var(--ink);
+        color: var(--paper);
+        font: 16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      main {
+        width: min(100%, 30rem);
+        padding: 2.5rem;
+        border: 1px solid var(--line);
+        border-radius: 1rem;
+        background: linear-gradient(180deg, rgb(13 27 44 / 0.7), rgb(8 18 31 / 0.92));
+      }
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        margin: 2rem 0 0;
+        color: var(--gold);
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+      .eyebrow::before { content: ""; width: 1.5rem; height: 1px; background: currentColor; opacity: 0.7; }
+      h1 {
+        margin: 1rem 0 0;
+        font: 400 2.5rem/1.1 Newsreader, Georgia, "Times New Roman", serif;
+        letter-spacing: -0.01em;
+      }
+      p { margin: 0.75rem 0 0; color: var(--muted); font-size: 0.9375rem; }
+      a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1.75rem;
+        padding: 0.75rem 1.25rem;
+        border-radius: 0.5rem;
+        background: var(--gold);
+        color: var(--ink);
+        font-weight: 600;
+        text-decoration: none;
+      }
+      a:hover { background: var(--gold-soft); }
+      a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+      [hidden] { display: none; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <svg viewBox="0 0 32 32" width="40" height="40" aria-hidden="true">
+        <circle cx="16" cy="16" r="14.5" fill="#08121f" stroke="#dcb366" stroke-width="1.5" />
+        <ellipse cx="16" cy="16" rx="6.5" ry="14.5" fill="none" stroke="#4fc58f" stroke-opacity="0.6" />
+        <path d="M1.5 16h29" stroke="#4fc58f" stroke-opacity="0.6" />
+        <path d="M16 6.2l2.3 7.5 7.5 2.3-7.5 2.3-2.3 7.5-2.3-7.5-7.5-2.3 7.5-2.3z" fill="#f1d698" stroke="#a9843d" stroke-width="0.6" stroke-linejoin="round" />
+      </svg>
+      <p class="eyebrow">Private preview</p>
+      <h1>AI Research Atlas</h1>
+      <p id="status" role="status">Opening the Atlas…</p>
+      <a id="continue" href="#" hidden>Continue to the Atlas</a>
+      <noscript><p>Turn on JavaScript to open the Atlas.</p></noscript>
+    </main>
+    <script>
+      (async () => {
+        const status = document.getElementById("status");
+        const link = document.getElementById("continue");
+        const base = `/${location.pathname.split("/")[1]}`;
+        const path = location.pathname.slice(base.length) || "/";
+        try {
+          const response = await fetch(`${base}/target.json?ts=${Date.now()}`, { cache: "no-store" });
+          const target = await response.json();
+          if (target.online && /^https:\/\/[a-z0-9.-]+$/i.test(target.url)) {
+            const destination = `${target.url}${path}${location.search}${location.hash}`;
+            link.href = destination;
+            link.hidden = false;
+            location.replace(destination);
+            return;
+          }
+          status.textContent = "The Atlas is offline right now. It runs on its owner’s machine; please try again later.";
+        } catch {
+          status.textContent = "The Atlas could not be reached just now. Please try again in a few minutes.";
+        }
+      })();
+    </script>
+  </body>
+</html>
